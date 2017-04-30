@@ -96,6 +96,7 @@ func (c *Client) GetAccountStatuses(ctx context.Context, id int64) ([]*Status, e
 // GetAccountFollowers return followers list.
 func (c *Client) GetAccountFollowers(ctx context.Context, id int64) ([]*Account, error) {
 	params := url.Values{}
+	params.Set("limit", "80")
 	var total []*Account
 	for {
 		var accounts []*Account
@@ -115,12 +116,23 @@ func (c *Client) GetAccountFollowers(ctx context.Context, id int64) ([]*Account,
 
 // GetAccountFollowing return following list.
 func (c *Client) GetAccountFollowing(ctx context.Context, id int64) ([]*Account, error) {
-	var accounts []*Account
-	err := c.doAPI(ctx, http.MethodGet, fmt.Sprintf("/api/v1/accounts/%d/following", id), nil, &accounts, nil)
-	if err != nil {
-		return nil, err
+	params := url.Values{}
+	params.Set("limit", "80")
+	var total []*Account
+	for {
+		var accounts []*Account
+		var next bool
+		err := c.doAPI(ctx, http.MethodGet, fmt.Sprintf("/api/v1/accounts/%d/following", id), params, &accounts, &next)
+		if err != nil {
+			return nil, err
+		}
+		total = append(total, accounts...)
+		if !next {
+			break
+		}
+		time.Sleep(c.interval)
 	}
-	return accounts, nil
+	return total, nil
 }
 
 // GetBlocks return block list.

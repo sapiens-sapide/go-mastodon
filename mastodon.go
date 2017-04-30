@@ -170,7 +170,7 @@ func NewClient(config *Config) *Client {
 	return &Client{
 		Client:   *http.DefaultClient,
 		config:   config,
-		interval: 10 * time.Second,
+		interval: 2 * time.Second,
 	}
 }
 
