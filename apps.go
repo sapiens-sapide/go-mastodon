@@ -5,9 +5,15 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 )
+
+func init() {
+	// disable http2 because some Mastodon instances are behind (old) nginx proxies which incorrectly handle http2
+	os.Setenv("GODEBUG", "http2server=0,http2client=0")
+}
 
 // AppConfig is a setting for registering applications.
 type AppConfig struct {
