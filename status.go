@@ -186,6 +186,17 @@ func (c *Client) GetTimelinePublic(ctx context.Context, isLocal bool, pg *Pagina
 	return statuses, nil
 }
 
+// GetTimelineDirect return statuses from direct timeline.
+func (c *Client) GetTimelineDirect(ctx context.Context, pg *Pagination) ([]*Status, error) {
+
+	var statuses []*Status
+	err := c.doAPI(ctx, http.MethodGet, "/api/v1/timelines/direct", nil, &statuses, pg)
+	if err != nil {
+		return nil, err
+	}
+	return statuses, nil
+}
+
 // GetTimelineHashtag return statuses from tagged timeline.
 func (c *Client) GetTimelineHashtag(ctx context.Context, tag string, isLocal bool, pg *Pagination) ([]*Status, error) {
 	params := url.Values{}
